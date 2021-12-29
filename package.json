@@ -1,7 +1,7 @@
 {
-  "name": "@everlast-brands/package-starter",
-  "version": "0.1.1",
-  "description": "Template project used to quickly create typescript npm packages.",
+  "name": "@auth-command/auth-command-sdk",
+  "version": "0.1.0",
+  "description": "Auth Command SDK",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
@@ -29,5 +29,9 @@
   },
   "files": [
     "dist/**/*"
-  ]
+  ],
+  "dependencies": {
+    "@everlast-brands/error-handling": "^0.1.0",
+    "axios": "^0.24.0"
+  }
 }
