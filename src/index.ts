@@ -32,12 +32,13 @@ export default class AuthCommandSDK {
     };
   }
 
-  async createUser(user: CreateUserInt) {
-    return await axios.post(
+  async createUser(user: CreateUserInt): Promise<string> {
+    const result = await axios.post(
       `${this.path}?appId=${this.appId}`,
       user,
       this.config
     );
+    return result.data.data;
   }
   async getUserById(id: string) {
     return await axios.get(
@@ -47,5 +48,13 @@ export default class AuthCommandSDK {
   }
   async getAllUsers() {
     return await axios.get(`${this.path}?appId=${this.appId}`, this.config);
+  }
+  async authenticate(email: string, password: string): Promise<any> {
+    const result = await axios.post(
+      `${this.path}/authenticate?appId=${this.appId}`,
+      { email, password },
+      this.config 
+    );
+    return result.data.data;
   }
 }
