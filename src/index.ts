@@ -1,7 +1,7 @@
-import axios from "axios";
+import fetch, { Response } from "node-fetch";
 
 interface AuthCommandInit {
-  path: string;
+  enviornment: string;
   appAPIKey: string;
   appID: string;
 }
@@ -13,14 +13,20 @@ interface CreateUserInt {
   phone?: string;
 }
 
+interface Result {
+  data: any;
+  message: string;
+  status: number;
+}
+
 export default class AuthCommandSDK {
-  path: string;
+  enviornment: string;
   appAPIKey: string;
   appId: string;
   config: any;
 
-  constructor({ path, appAPIKey, appID }: AuthCommandInit) {
-    this.path = path + "/users";
+  constructor({ enviornment, appAPIKey, appID }: AuthCommandInit) {
+    this.enviornment = enviornment + "/users";
     this.appAPIKey = appAPIKey;
     this.appId = appID;
     this.config = {
@@ -32,29 +38,41 @@ export default class AuthCommandSDK {
     };
   }
 
-  async createUser(user: CreateUserInt): Promise<string> {
-    const result = await axios.post(
-      `${this.path}?appId=${this.appId}`,
-      user,
-      this.config
-    );
-    return result.data.data;
+  async createUser(user: CreateUserInt): Promise<Result> {
+    const result = await fetch(`${this.enviornment}`, {
+      method: "POST",
+      ...this.config,
+      body: { ...user, appId: this.appId },
+    });
+    const response: any = await result.json();
+    const processedResult: Result = { ...response, status: result.status };
+    return processedResult;
   }
   async getUserById(id: string) {
-    return await axios.get(
-      `${this.path}/${id}?appId=${this.appId}`,
+    const result = await fetch(
+      `${this.enviornment}/${id}?appId=${this.appId}`,
       this.config
     );
+    const response: any = await result.json();
+    const processedResult: Result = { ...response, status: result.status };
+    return processedResult;
   }
   async getAllUsers() {
-    return await axios.get(`${this.path}?appId=${this.appId}`, this.config);
+    const result = await fetch(
+      `${this.enviornment}?appId=${this.appId}`,
+      this.config
+    );
+    const response: any = await result.json();
+    const processedResult: Result = { ...response, status: result.status };
+    return processedResult;
   }
   async authenticate(email: string, password: string): Promise<any> {
-    const result = await axios.post(
-      `${this.path}/authenticate?appId=${this.appId}`,
-      { email, password },
-      this.config 
+    const result = await fetch(
+      `${this.enviornment}/authenticate?appId=${this.appId}`,
+      { ...this.config, body: { email, password } }
     );
-    return result.data.data;
+    const response: any = await result.json();
+    const processedResult: Result = { ...response, status: result.status };
+    return processedResult;
   }
 }
