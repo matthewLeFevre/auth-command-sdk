@@ -1,5 +1,5 @@
 {
-  "name": "@auth-command/auth-command-sdk",
+  "name": "@app-command/auth-sdk",
   "version": "0.1.0",
   "description": "Auth Command SDK",
   "main": "dist/index.js",
