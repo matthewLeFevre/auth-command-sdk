@@ -3,7 +3,7 @@ import fetch, { Response } from "node-fetch";
 interface AuthCommandInit {
   enviornment: string;
   appAPIKey: string;
-  appID: string;
+  appId: string;
 }
 
 interface CreateUserInt {
@@ -13,8 +13,8 @@ interface CreateUserInt {
   phone?: string;
 }
 
-interface Result {
-  data: any;
+interface Result<T> {
+  data: T;
   message: string;
   status: number;
 }
@@ -25,10 +25,10 @@ export default class AuthCommandSDK {
   appId: string;
   config: any;
 
-  constructor({ enviornment, appAPIKey, appID }: AuthCommandInit) {
+  constructor({ enviornment, appAPIKey, appId }: AuthCommandInit) {
     this.enviornment = enviornment + "/users";
     this.appAPIKey = appAPIKey;
-    this.appId = appID;
+    this.appId = appId;
     this.config = {
       headers: {
         Authorization: `Bearer ${appAPIKey}`,
@@ -38,14 +38,14 @@ export default class AuthCommandSDK {
     };
   }
 
-  async createUser(user: CreateUserInt): Promise<Result> {
+  async createUser(user: CreateUserInt): Promise<Result<any>> {
     const result = await fetch(`${this.enviornment}`, {
       method: "POST",
       ...this.config,
       body: { ...user, appId: this.appId },
     });
     const response: any = await result.json();
-    const processedResult: Result = { ...response, status: result.status };
+    const processedResult: Result<any> = { ...response, status: result.status };
     return processedResult;
   }
   async getUserById(id: string) {
@@ -54,7 +54,7 @@ export default class AuthCommandSDK {
       this.config
     );
     const response: any = await result.json();
-    const processedResult: Result = { ...response, status: result.status };
+    const processedResult: Result<any> = { ...response, status: result.status };
     return processedResult;
   }
   async getAllUsers() {
@@ -63,7 +63,7 @@ export default class AuthCommandSDK {
       this.config
     );
     const response: any = await result.json();
-    const processedResult: Result = { ...response, status: result.status };
+    const processedResult: Result<any> = { ...response, status: result.status };
     return processedResult;
   }
   async authenticate(email: string, password: string): Promise<any> {
@@ -72,7 +72,7 @@ export default class AuthCommandSDK {
       { ...this.config, body: { email, password } }
     );
     const response: any = await result.json();
-    const processedResult: Result = { ...response, status: result.status };
+    const processedResult: Result<any> = { ...response, status: result.status };
     return processedResult;
   }
 }
