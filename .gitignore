@@ -3,3 +3,4 @@ yarn.lock
 package.lock
 envVariables.js
 dist
+__test__/env.ts

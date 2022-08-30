@@ -1,4 +1,7 @@
-import fetch, { Response } from "node-fetch";
+import { RequestInfo, RequestInit } from "node-fetch";
+
+const fetch = (url: RequestInfo, init?: RequestInit) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
 
 interface AuthCommandInit {
   enviornment: string;
@@ -14,7 +17,7 @@ interface CreateUserInt {
 }
 
 interface Result<T> {
-  data: T;
+  data?: T;
   message: string;
   status: number;
 }
@@ -42,8 +45,9 @@ export default class AuthCommandSDK {
     const result = await fetch(`${this.enviornment}`, {
       method: "POST",
       ...this.config,
-      body: { ...user, appId: this.appId },
+      body: JSON.stringify({ ...user, appId: this.appId }),
     });
+
     const response: any = await result.json();
     const processedResult: Result<any> = { ...response, status: result.status };
     return processedResult;
@@ -59,7 +63,7 @@ export default class AuthCommandSDK {
   }
   async getAllUsers() {
     const result = await fetch(
-      `${this.enviornment}?appId=${this.appId}`,
+      `${this.enviornment}/application?appId=${this.appId}`,
       this.config
     );
     const response: any = await result.json();
@@ -69,9 +73,40 @@ export default class AuthCommandSDK {
   async authenticate(email: string, password: string): Promise<any> {
     const result = await fetch(
       `${this.enviornment}/authenticate?appId=${this.appId}`,
-      { ...this.config, body: { email, password } }
+      {
+        ...this.config,
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }
     );
     const response: any = await result.json();
+    const processedResult: Result<any> = { ...response, status: result.status };
+    return processedResult;
+  }
+  async updateUser(userId: string, updates) {
+    const result = await fetch(
+      `${this.enviornment}/${userId}?appId=${this.appId}`,
+      {
+        ...this.config,
+        method: "PUT",
+        body: JSON.stringify(updates),
+      }
+    );
+    const response = await result.json();
+    console.log(response.data);
+    const processedResult: Result<any> = { ...response, status: result.status };
+    return processedResult;
+  }
+
+  async deleteUser(userId: string) {
+    const result = await fetch(
+      `${this.enviornment}/${userId}?appId=${this.appId}`,
+      {
+        ...this.config,
+        method: "DELETE",
+      }
+    );
+    const response = await result.json();
     const processedResult: Result<any> = { ...response, status: result.status };
     return processedResult;
   }
