@@ -1,5 +1,9 @@
 # Changelog
 
+# v0.2.1
+
+Not yet ready to support ESM rolled node-fetch back to cjs
+
 # v0.2.0
 
 Added updateUser method
